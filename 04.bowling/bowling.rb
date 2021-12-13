@@ -1,40 +1,34 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# フレームの数を定義
 NUMBER_OF_FRAMES = 10
 STRIKE = 'X'
 STRIKE_SCORE = 10
 
-shot_i = 0      # 該当するショットのインデックス
-score = 0       # フレームのスコア
-strikes = []    # 該当するショットがストライクかを記憶
-frames = []     # 各フレームのスコア
+text_scores = ARGV[0].split(',')
 
-# コマンドの引数を取得し、コンマで分割
-scores = ARGV[0].split(',')
-
-# scoresの「X」をstrikesに記憶し、scoresを10に修正
-scores.each_index do |i|
-  if scores[i] == STRIKE
-    strikes[i] = 1
-    scores[i] = STRIKE_SCORE
-  else
-    strikes[i] = 0
-    scores[i] = scores[i].to_i
+strikes = []
+scores =
+  text_scores.map.with_index do |score, i|
+    if score == STRIKE
+      strikes[i] = 1
+      STRIKE_SCORE
+    else
+      strikes[i] = 0
+      score.to_i
+    end
   end
+
+shot_idx = 0
+frames = []
+NUMBER_OF_FRAMES.times do             # フレームごとにスコアを加算。ストライク：3ショット、スペア：3ショット、その他：2ショット
+  score = scores[shot_idx]            # 1ショット目
+  unless scores[shot_idx + 1].nil?
+    score += scores[shot_idx + 1]     # 2ショット目
+    score += scores[shot_idx + 2] if !scores[shot_idx + 2].nil? && score >= 10 # 3ショット目（この時点で、> 10（ストライク）、== 10（スペア）の場合）
+  end
+  shot_idx += (2 - strikes[shot_idx]) # 次のフレームの先頭に移動（ストライクの場合は次のショット、それ以外は2ショット先）
+  frames << score
 end
 
-# 各フレームのスコアを求める
-NUMBER_OF_FRAMES.times do
-  score = scores[shot_i]            # まずそのショットのスコアをカウント
-  unless scores[shot_i + 1].nil?    # ストライクか否かにかかわらず、次のショットがあればスコアを追加
-    score += scores[shot_i + 1]
-    # ストライクまたはスペアで2つ先のショットがあればスコアを追加
-    score += scores[shot_i + 2] if !scores[shot_i + 2].nil? && score >= 10
-  end
-  shot_i += (2 - strikes[shot_i])   # ストライクの場合は次のショット、それ以外は2ショット先に移動する
-  frames << score                   # framesにスコアを追加
-end
-
-puts frames.sum                     # 各フレームの合計スコアを出力
+puts frames.sum
