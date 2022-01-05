@@ -4,8 +4,8 @@ STRIKE_EXTRA_SHOT = 2
 FULL_SCORE = 10
 
 class Shot
-  attr_reader :score, :strike, :remaining_shots
   attr_accessor :end_of_frame
+  attr_reader :score, :strike, :remaining_shots
 
   def initialize
     @strike = false

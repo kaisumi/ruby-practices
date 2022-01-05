@@ -8,7 +8,6 @@ ONE_BEFORE_LAST_FRAME = -2
 FINAL_FRAME = 10
 
 class Game
-  attr_accessor :text_scores
   attr_reader :score
 
   def initialize
