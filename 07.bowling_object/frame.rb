@@ -2,28 +2,46 @@
 
 require_relative 'shot'
 
-# FULL_SCORE = 10
 SPARE_EXTRA_SHOT = 1
+STRIKE_EXTRA_SHOT = 2
+NORMAL_FRAME_SHOTS = 2
+STRIKE_SHOT = 1
+NO_REMAINING_SHOT = 0
 
 class Frame
-  attr_accessor :spare, :score, :remaining_shots
-  attr_reader :strike
-
-  def initialize(shot)
-    @spare = false
+  def initialize(shot = nil)
     @shots = []
-    @shots << shot
-    @score = shot.score
-    @strike = shot.strike
-    @remaining_shots = shot.remaining_shots
+    @shots << shot unless shot.nil?
+  end
+
+  def strike?
+    @shots.first.score == FULL_SCORE
+  end
+
+  def spare?
+    @shots[0..1].sum(&:score) == FULL_SCORE && !strike?
   end
 
   def <<(shot)
     @shots << shot
-    @score += shot.score
-    return unless @score == FULL_SCORE
+    return unless spare?
+  end
 
-    @spare = true
-    @remaining_shots += SPARE_EXTRA_SHOT
+  def score
+    @shots.sum(&:score)
+  end
+
+  def frame_ended?
+    @shots.count >= NORMAL_FRAME_SHOTS || strike?
+  end
+
+  def remaining_shots
+    if strike?
+      STRIKE_SHOT + STRIKE_EXTRA_SHOT - @shots.count
+    elsif spare?
+      NORMAL_FRAME_SHOTS + SPARE_EXTRA_SHOT - @shots.count
+    else
+      NO_REMAINING_SHOT
+    end
   end
 end

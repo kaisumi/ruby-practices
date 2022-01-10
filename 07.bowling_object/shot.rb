@@ -1,27 +1,22 @@
 # frozen_string_literal: true
 
-STRIKE_EXTRA_SHOT = 2
 FULL_SCORE = 10
+EMPTY_SCORE = 0
 
 class Shot
-  attr_accessor :end_of_frame
-  attr_reader :score, :strike, :remaining_shots
-
-  def initialize
-    @strike = false
-    @end_of_frame = false
+  def initialize(text_shot = '')
     @remaining_shots = 0
-    @score = 0
+    @text_shot = text_shot
   end
 
-  def process_strike(text_shot)
-    if text_shot == 'X'
-      @strike = true
-      @end_of_frame = true
-      @remaining_shots = STRIKE_EXTRA_SHOT
-      @score = FULL_SCORE
+  def score
+    case @text_shot
+    when 'X'
+      FULL_SCORE
+    when blank?
+      EMPTY_SCORE
     else
-      @score = text_shot.to_i
+      @text_shot.to_i
     end
   end
 end

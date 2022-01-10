@@ -3,19 +3,16 @@
 require_relative 'shot'
 require_relative 'frame'
 
-PREVIOUS_FRAME = -1
-ONE_BEFORE_LAST_FRAME = -2
+PREVIOUS_FRAME = -2
+ONE_BEFORE_LAST_FRAME = -3
 FINAL_FRAME = 10
 
 class Game
-  attr_reader :score
-
-  def initialize
-    @frame_count = 0
+  def initialize(text_shots = '')
     @text_shots = []
-    @shots = []
     @frames = []
-    @score = 0
+
+    text_to_score(text_shots) unless text_shots.blank?
   end
 
   def text_to_score(text_shots)
@@ -25,29 +22,28 @@ class Game
     end
   end
 
-  def <<(shot_score)
-    shot_to_frames(shot_score)
+  # def <<(shot_score)
+  #   shot_to_frames(shot_score)
+  # end
+
+  def score
+    @frames.sum(&:score)
   end
 
   private
 
   def shot_to_frames(text_shot)
-    shot = Shot.new
-    shot.process_strike(text_shot)
-    @score += shot.score
+    shot = Shot.new(text_shot)
 
     shot_to_frame(shot)
     add_extra_scores(shot)
-
-    @shots << shot
   end
 
   def shot_to_frame(shot)
-    if @frames.count < FINAL_FRAME                      # 最終フレーム以外
-      if @shots.count.zero? || @shots.last.end_of_frame # 1投目
+    if @frames.count < FINAL_FRAME
+      if @frames.blank? || @frames.last.frame_ended?     # 1投目
         @frames << Frame.new(shot)
-      else                                              # ２投目
-        shot.end_of_frame = true
+      else                                               # 2投目
         @frames.last << shot
       end
     else
@@ -61,10 +57,9 @@ class Game
   end
 
   def add_extra_score(reference_number, shot)
-    return unless @frames.count > reference_number.abs && !@frames[reference_number - 1].remaining_shots.zero?
+    return if @frames[reference_number].nil?
+    return if @frames[reference_number].remaining_shots.zero?
 
-    @frames[reference_number - 1].score += shot.score
-    @frames[reference_number - 1].remaining_shots -= 1
-    @score += shot.score
+    @frames[reference_number] << shot
   end
 end
