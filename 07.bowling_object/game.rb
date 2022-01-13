@@ -46,7 +46,7 @@ class Game
 
   def shot_to_frame(shot)
     if @frames.count < FINAL_FRAME
-      if @frames.blank? || @frames.last.frame_ended?     # 1投目
+      if @frames.empty? || @frames.last.frame_ended?     # 1投目
         @frames << Frame.new(shot)
       else                                               # 2投目
         @frames.last << shot

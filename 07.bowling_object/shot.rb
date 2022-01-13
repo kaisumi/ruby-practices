@@ -12,7 +12,7 @@ class Shot
     case @text_shot
     when 'X'
       FULL_SCORE
-    when blank?
+    when ''
       EMPTY_SCORE
     else
       @text_shot.to_i
