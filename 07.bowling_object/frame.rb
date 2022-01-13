@@ -9,9 +9,14 @@ STRIKE_SHOT = 1
 NO_REMAINING_SHOT = 0
 
 class Frame
+  # 引数なし：インスタンス作成のみ、引数あり：インスタンス作成＋データ挿入
   def initialize(shot = nil)
     @shots = []
-    @shots << shot unless shot.nil?
+    self << shot unless shot.nil?
+  end
+
+  def <<(shot)
+    @shots << shot
   end
 
   def strike?
@@ -20,11 +25,6 @@ class Frame
 
   def spare?
     @shots[0..1].sum(&:score) == FULL_SCORE && !strike?
-  end
-
-  def <<(shot)
-    @shots << shot
-    return unless spare?
   end
 
   def score
@@ -43,5 +43,9 @@ class Frame
     else
       NO_REMAINING_SHOT
     end
+  end
+
+  def add_extra_score(shot)
+    self << shot unless remaining_shots.zero?
   end
 end

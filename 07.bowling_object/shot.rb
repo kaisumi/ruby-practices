@@ -5,7 +5,6 @@ EMPTY_SCORE = 0
 
 class Shot
   def initialize(text_shot = '')
-    @remaining_shots = 0
     @text_shot = text_shot
   end
 

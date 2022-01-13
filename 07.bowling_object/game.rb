@@ -11,9 +11,24 @@ class Game
   def initialize(text_shots = '')
     @text_shots = []
     @frames = []
-
-    text_to_score(text_shots) unless text_shots.blank?
+    text_to_score(text_shots) unless text_shots.empty?
   end
+
+  # 別の使用方法として、リアルタイムにショットを追加して現在のスコアを確認できるようにしています。
+  def <<(shot_score)
+    shot_to_frames(shot_score)
+  end
+
+  # 別の使用方法として、リアルタイムにショットを追加した際に現在のフレームを確認できるようにしています。
+  def frame_count
+    @frames.count
+  end
+
+  def score
+    @frames.sum(&:score)
+  end
+
+  private
 
   def text_to_score(text_shots)
     @text_shots = text_shots.split(',')
@@ -21,16 +36,6 @@ class Game
       shot_to_frames(text_shot)
     end
   end
-
-  # def <<(shot_score)
-  #   shot_to_frames(shot_score)
-  # end
-
-  def score
-    @frames.sum(&:score)
-  end
-
-  private
 
   def shot_to_frames(text_shot)
     shot = Shot.new(text_shot)
@@ -52,14 +57,7 @@ class Game
   end
 
   def add_extra_scores(shot)
-    add_extra_score(PREVIOUS_FRAME, shot)
-    add_extra_score(ONE_BEFORE_LAST_FRAME, shot)
-  end
-
-  def add_extra_score(reference_number, shot)
-    return if @frames[reference_number].nil?
-    return if @frames[reference_number].remaining_shots.zero?
-
-    @frames[reference_number] << shot
+    @frames[PREVIOUS_FRAME]&.add_extra_score(shot)
+    @frames[ONE_BEFORE_LAST_FRAME]&.add_extra_score(shot)
   end
 end

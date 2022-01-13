@@ -3,8 +3,16 @@
 require_relative 'game'
 
 def bowling_object(text_scores)
+  game = Game.new(text_scores)
+  game.score
+end
+
+def bowling_object_another_usage(text_scores)
   game = Game.new
-  game.text_to_score(text_scores)
+  text_scores.split(',').each do |text_score|
+    game << text_score
+    # puts "Frame: #{game.frame_count}, Score: #{game.score}" # 出力例
+  end
   game.score
 end
 
