@@ -1,23 +1,21 @@
 # frozen_string_literal: true
 
-STRIKE = 'X'
-STRIKE_SCORE = 10
+FULL_SCORE = 10
+EMPTY_SCORE = 0
 
 class Shot
-  attr_reader :score
-
-  def initialize(score)
-    @strike = false
-    if score == STRIKE
-      @strike = true
-      @score = STRIKE_SCORE
-    else
-      @strike = false
-      @score = score.to_i
-    end
+  def initialize(text_shot = '')
+    @text_shot = text_shot
   end
 
-  def strike?
-    @strike
+  def score
+    case @text_shot
+    when 'X'
+      FULL_SCORE
+    when ''
+      EMPTY_SCORE
+    else
+      @text_shot.to_i
+    end
   end
 end
