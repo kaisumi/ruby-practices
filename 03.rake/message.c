@@ -1,5 +1,7 @@
 #include <stdio.h>
 
-void message(){
-  printf("message\n");
+char *hello();
+
+int main(){
+  printf("%s", hello());
 }
