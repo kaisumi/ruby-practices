@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+CC = 'gcc'
+
+task default: 'hello'
+
+file 'hello' => ['hello.o', 'message.o'] do
+  sh "#{CC} -o hello hello.o message.o"
+end
+
+file 'message.o' => 'message.c' do
+  sh "#{CC} -c message.c"
+end
+
+file 'hello.o' => 'hello.c' do
+  sh "#{CC} -c hello.c"
+end
